@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE client-cache PUBLIC
+        "-//GemStone Systems, Inc.//GemFire Declarative Caching 6.6//EN"
+        "http://www.gemstone.com/dtd/cache6_6.dtd">
+<client-cache>
+    <pool name="client" subscription-enabled="true">
+        <locator host="localhost" port="41111"/>
+    </pool>
+
+    <region name="Customers" refid="CACHING_PROXY">
+
+    </region>
+
+</client-cache>
