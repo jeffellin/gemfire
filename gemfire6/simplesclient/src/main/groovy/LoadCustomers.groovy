@@ -1,5 +1,5 @@
+import com.ellin.Customer
 import com.gemstone.gemfire.cache.client.ClientCacheFactory
-import groovy.transform.ToString
 
 def cache = new ClientCacheFactory()
         .set("name", "ClientWorker")
@@ -9,6 +9,7 @@ def cache = new ClientCacheFactory()
 def assets = cache.getRegion("Customers");
 
 Customer c = new Customer(id:"1",name:"Jeff");
+
 
 assets.put(c.id,c);
 
@@ -20,8 +21,3 @@ println "******************************************"
 
 cache.close()
 
-@ToString
-class Customer implements Serializable{
-    String id;
-    String name;
-}
