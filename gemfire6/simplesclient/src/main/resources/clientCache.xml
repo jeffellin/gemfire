@@ -4,7 +4,7 @@
         "http://www.gemstone.com/dtd/cache6_6.dtd">
 <client-cache>
     <pool name="client" subscription-enabled="true">
-        <locator host="localhost" port="41111"/>
+        <locator host="localhost" port="10301"/>
     </pool>
 
     <region name="Customers" refid="CACHING_PROXY">

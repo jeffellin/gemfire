@@ -8,7 +8,7 @@ def cache = new ClientCacheFactory()
 
 def assets = cache.getRegion("Customers");
 
-Customer c = new Customer(id:"1",name:"Jeff");
+Customer c = new Customer(id:"1",customerName:"Jeff");
 
 
 assets.put(c.id,c);
