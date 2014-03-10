@@ -1,0 +1,65 @@
+#!/bin/bash
+
+OLDPWD=$PWD
+cd `dirname $0`
+BIN=`pwd`;BASE=`dirname $BIN`
+cd $OLDPWD
+
+source $BASE/bin/common.sh
+
+GEMFIRE_WORK=$GEMFIRE_WORK/node-$2
+	
+mkdir -p $GEMFIRE_WORK
+mkdir -p $GEMFIRE_WORK/logs
+
+SERVER_PORT=$SERVER_PORT$2
+SERVER_LOG=$GEMFIRE_WORK/logs/cacheserver.log
+
+
+case "$1" in
+
+  status)
+  
+		$GEMFIRE/bin/cacheserver status -dir=$GEMFIRE_WORK
+		;;
+
+
+  start)
+    
+    	status=`$GEMFIRE/bin/cacheserver status -dir=$GEMFIRE_WORK`
+    	
+    	echo "${status}"
+    	
+	if [[ "${status}" == *stopped* || "${status}" == *killed* ]]
+	then	
+		echo "Starting $TAG gemfire server"
+        $GEMFIRE/bin/cacheserver start \
+			-J-Xms$SERVER_MEM -J-Xmx$SERVER_MEM \
+			-J-DgemfirePropertyFile=$SERVER_PROP_FILE \
+			-J-Dgemfire.ALLOW_PERSISTENT_TRANSACTIONS=true \
+			-J-Dgemfire.log-file=$SERVER_LOG \
+			-J-Dgemfire.cache-xml-file=$SERVER_CACHE_FILE \
+			-J-DDATA_DIR=$GEMFIRE_WORK/disk-store \
+			-J-Denv=$TAG \
+			-dir=$GEMFIRE_WORK -server-port=$SERVER_PORT \
+			-classpath=$CLASSPATH \
+			distributed-system-id=1 \
+			locators=$LOCATORS
+	else
+		echo "CacheServer is already Running"
+fi
+
+
+	      ;;
+        
+  stop)
+        echo "Stopping $TAG gemfire server"
+        $GEMFIRE/bin/cacheserver stop \
+			-dir=$GEMFIRE_WORK
+        ;;
+
+  *)
+        echo "Usage: /sbin/service gemfire-server {start|stop}"
+        exit 1
+esac
+

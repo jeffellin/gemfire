@@ -1,0 +1,40 @@
+#!/bin/bash
+###
+# chkconfig: 235 97 56
+# description: Manages the Gemfire locator service
+###
+
+OLDPWD=$PWD
+cd `dirname $0`
+BIN=`pwd`;BASE=`dirname $BIN`
+cd $OLDPWD
+
+source $BASE/bin/common.sh
+
+case "$1" in
+  start)
+        echo "Starting $TAG gemfire locator"
+		export CLASSPATH
+        $GEMFIRE/bin/gemfire start-locator \
+			-dir=$GEMFIRE_WORK -port=$LOCATOR_PORT \
+			-DgemfirePropertyFile=$LOCATOR_PROP_FILE \
+			-Dgemfire.log-file=$LOCATOR_LOG \
+			-Dgemfire.distributed-system-id=1 \
+			-Denv=$TAG
+        ;;
+  stop)
+        echo "Stopping $TAG gemfire locator"
+        $GEMFIRE/bin/gemfire stop-locator \
+			-dir=$GEMFIRE_WORK -port=$LOCATOR_PORT
+        ;;
+  status)
+        echo "Status of $TAG gemfire locator"
+        $GEMFIRE/bin/gemfire status-locator \
+			-dir=$GEMFIRE_WORK 
+        ;;
+
+  *)
+        echo "Usage: /sbin/service gemfire-locator {start|stop}"
+        exit 1
+esac
+

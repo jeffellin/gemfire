@@ -4,3 +4,5 @@
 *.jar
 *.war
 *.ear
+*.iml
+gemfire6/partition-test/.idea

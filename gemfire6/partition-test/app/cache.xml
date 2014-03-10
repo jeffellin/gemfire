@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!DOCTYPE cache PUBLIC
+    "-//GemStone Systems, Inc.//GemFire Declarative Caching 6.6//EN"
+    "http://www.gemstone.com/dtd/cache6_6.dtd">
+
+<cache>
+    
+    <gateway-hub id="event-gateway">
+    	<gateway id="publisher" concurrency-level="1">
+    		<gateway-listener>
+    			<class-name>GatewayListener</class-name>
+    		</gateway-listener>
+    		<gateway-queue enable-persistence="true"
+				disk-store-name="fnmpfj-disk-store"
+    			batch-conflation="false"
+    			batch-size="10"
+    			batch-time-interval="1000"	
+    		/>
+    			
+    	</gateway>
+    </gateway-hub>
+    
+    
+    
+    
+    	<disk-store name="fnmpfj-disk-store" auto-compact="true"
+		max-oplog-size="100">
+		<disk-dirs>
+			<disk-dir dir-size="20000"><![CDATA[${DATA_DIR}/FNMPFJ]]></disk-dir>
+		</disk-dirs>
+	</disk-store>
+    
+    	<disk-store name="pdx-disk-store" auto-compact="true"
+		max-oplog-size="100">
+		<disk-dirs>
+			<disk-dir dir-size="20000"><![CDATA[${DATA_DIR}/META]]></disk-dir>
+		</disk-dirs>
+	</disk-store>
+    
+    	<pdx read-serialized="true" persistent="true" disk-store-name="pdx-disk-store">
+		<pdx-serializer>
+			<class-name>com.gemstone.gemfire.pdx.ReflectionBasedAutoSerializer</class-name>
+			<parameter name="classes">
+				<string>com.ellin.Customer#identity=id</string>
+			</parameter>
+		</pdx-serializer>
+	</pdx>
+
+    
+    	<region-attributes id="partition-persisted-redundant"
+		data-policy="persistent-partition" enable-gateway="false"
+		hub-id="wan-gateway" statistics-enabled="true" disk-store-name="fnmpfj-disk-store">
+		<partition-attributes redundant-copies="1"
+			recovery-delay="60000"
+			startup-recovery-delay="0"
+			total-num-buckets="113" />
+		<eviction-attributes>
+			<lru-heap-percentage action="overflow-to-disk" />
+		</eviction-attributes>
+	</region-attributes>
+
+    
+    	<region-attributes id="replicate-persisted"
+		data-policy="persistent-replicate" enable-gateway="false"
+		hub-id="wan-gateway" statistics-enabled="true" scope="distributed-ack"
+		disk-store-name="fnmpfj-disk-store">
+		<eviction-attributes>
+			<lru-heap-percentage action="overflow-to-disk" />
+		</eviction-attributes>
+	</region-attributes>
+    
+    	
+        <region name="Customers" refid="replicate-persisted" >
+        	<region-attributes enable-gateway="false" hub-id="event-gateway">
+        
+        	<cache-writer>
+				<class-name>WBCacheWriter</class-name>
+			</cache-writer>
+		
+        	</region-attributes>
+        
+        </region>
+        
+         <region name="PersistentEvent2" refid="replicate-persisted" >
+        	<region-attributes enable-gateway="true" hub-id="event-gateway">
+        
+        	
+		
+        	</region-attributes>
+        
+        </region>
+        
+        
+        <region name="BUPE" refid="partition-persisted-redundant">
+         </region>
+</cache>
+	
