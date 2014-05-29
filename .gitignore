@@ -6,3 +6,4 @@
 *.ear
 *.iml
 gemfire6/partition-test/.idea
+gemfire7/log/site41111/locator

@@ -1,5 +1,6 @@
 # Get script directory
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
 
 export GEMFIRE_VERSION=7
 
